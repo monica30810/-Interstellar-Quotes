@@ -73,26 +73,30 @@
     /* 📱 手機版額外優化 */
 @media (max-width: 480px) {
   #controls {
-    flex-direction: column;
-    max-width: 90vw;
-    font-size: 1rem;
-    left: 50% !important;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
     transform: translateX(-50%);
-    right: auto;
-    bottom: 20px;
-    top: auto !important;
-    align-items: stretch;
-    overflow-y: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100vw;
+    padding: 0.5rem;
+    gap: 0.5rem;
+    font-size: 1rem;
+    z-index: 20;
+    border-radius: 1rem 1rem 0 0;
   }
 
   #controls input,
   #controls select,
   #controls button {
-    width: 100%;
+    width: 48%;
     box-sizing: border-box;
     font-size: 1rem;
   }
 }
+
 
   </style>
 </head>
