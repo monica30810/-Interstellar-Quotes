@@ -240,6 +240,12 @@ function draw() {
   const maxR = min(width, height) * 0.35;
   const targetR = maxR * (0.4 + 0.6 * rProgress);
 
+  // 新增：先定義 input 元素
+const inhaleTime = document.getElementById('inhaleTime');
+const hold1Time = document.getElementById('hold1Time');
+const exhaleTime = document.getElementById('exhaleTime');
+const hold2Time = document.getElementById('hold2Time');
+
   let easing = 0.07;
   if (phases[phase] === 'Inhale') {
     easing = 0.04;
@@ -286,7 +292,7 @@ function playSoundForPhase(phaseName) {
 document.getElementById('presetSelector').addEventListener('change', (e) => {
   const val = e.target.value;
   const presets = {
-    '': [4, 0, 6, 0]
+    '': [4, 0, 6, 0]，
     '4-7-8': [4, 7, 8, 0],
     'box': [4, 4, 4, 4],
     'sigh': [4, 0, 8, 0],
