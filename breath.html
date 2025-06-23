@@ -1,23 +1,21 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>極光呼吸引導</title>
-  <!-- 加入 p5.js 與字體 -->
   <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Noto+Serif+TC&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC&display=swap" rel="stylesheet">
   <style>
-    /* 全域樣式 */
     html, body {
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       background-color: #0b0b14;
       overflow: hidden;
       font-family: 'Noto Serif TC', serif;
       height: 100%;
     }
-
-    /* 控制面板：共用樣式 */
     #controls {
       background: rgba(255, 255, 255, 0.05);
       padding: 0.75rem 1rem;
@@ -26,21 +24,30 @@
       font-size: 0.9rem;
       box-shadow: 0 0 12px rgba(255,255,255,0.3);
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 0.6rem;
       max-width: 90vw;
       z-index: 999;
     }
-
+    .row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    #controls label {
+      margin-right: 6px;
+    }
     #controls input, #controls select {
       background: rgba(255,255,255,0.1);
       color: white;
       border: none;
       border-radius: 6px;
-      padding: 0.25rem 0.5rem;
+      padding: 0.25rem 0.6rem;
       font-size: 1rem;
+      min-width: 60px;
     }
-
     #controls button {
       background: rgba(255,255,255,0.4);
       border: none;
@@ -50,8 +57,6 @@
       padding: 0.4rem 0.8rem;
       cursor: pointer;
     }
-
-    /* 電腦版樣式（可拖曳） */
     @media (min-width: 481px) {
       #controls {
         position: fixed;
@@ -65,15 +70,12 @@
         max-height: 40vh;
       }
     }
-
-    /* 手機版樣式（固定底部） */
     @media (max-width: 480px) {
       #controls {
         position: fixed;
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
-        flex-direction: column;
         border-radius: 20px 20px 0 0;
         width: 95vw;
         padding: 12px;
@@ -105,209 +107,5 @@
       <label>停</label><input id="hold2Time" value="0" />
     </div>
   </div>
-
-
-<script>
-let phase = 0;
-let phases = ['Inhale', 'Hold1', 'Exhale', 'Hold2'];
-let phaseDurations = [4, 0, 6, 0];
-let lastSwitchTime = 0;
-let currentR = 0;
-let isPlaying = false;
-
-let bgmAudio = new Audio('https://raw.githubusercontent.com/monica30810/learning-project/main/The_Sirens_of_Titan.mp3');
-bgmAudio.loop = true;
-bgmAudio.volume = 0.5;
-
-let inhaleAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/inhale.mp3');
-let exhaleAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/exhale.mp3');
-let sighAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/Sign.wav');
-let bhastrikaAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/Inhale-Exhale-Sharp.wav');
-bhastrikaAudio.volume = 0.5;
-inhaleAudio.volume = 0.2;
-exhaleAudio.volume = 0.2;
-sighAudio.volume = 0.5;
-
-const auroraColors = [
-  ['#7FDBFF', '#0074D9'],
-  ['#39CCCC', '#3D9970'],
-  ['#B10DC9', '#85144b'],
-  ['#FFDC00', '#FF851B'],
-  ['#FF69B4', '#C71585'],
-  ['#00FA9A', '#2E8B57'],
-];
-let currentColorIndex = 0;
-let outerColor;
-
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  textAlign(CENTER, CENTER);
-  noStroke();
-  outerColor = color(auroraColors[0][1]);
-  updateDurationsFromInputs();
-  enableDrag();
-}
-
-function draw() {
-  background('#0b0b14');
-  if (!isPlaying) return;
-
-  let now = millis() / 1000;
-  if (now - lastSwitchTime >= phaseDurations[phase]) {
-    phase = (phase + 1) % 4;
-    lastSwitchTime = now;
-    if (phase === 0) {
-      currentColorIndex = (currentColorIndex + 1) % auroraColors.length;
-      outerColor = color(auroraColors[currentColorIndex][1]);
-      playSoundForPhase('Inhale');
-    } else if (phase === 2) {
-      playSoundForPhase('Exhale');
-    }
-  }
-
-  let t = constrain((now - lastSwitchTime) / phaseDurations[phase], 0, 1);
-  let rProgress = (phases[phase] === 'Inhale') ? t :
-                  (phases[phase] === 'Exhale') ? 1 - t :
-                  (phases[phase] === 'Hold1') ? 1 : 0;
-
-const maxR = min(width, height) * 0.35;
-const targetR = maxR * (0.4 + 0.6 * rProgress);
-
-let easing = 0.07; // 預設為平滑的速度
-if (phases[phase] === 'Inhale') {
-  easing = 0.04; // 吸氣變大更慢
-} else if (phases[phase] === 'Exhale') {
-  easing = 0.12; // 吐氣縮小更快
-}
-
-currentR = lerp(currentR, targetR, easing);
-
-  push();
-  translate(width / 2, height / 2);
-  let centerColor = color(10, 10, 10);
-  for (let i = 80; i > 0; i--) {
-    let amt = i / 80;
-    let c = lerpColor(centerColor, outerColor, amt);
-    fill(c);
-    ellipse(0, 0, currentR * 2 * amt);
-  }
-  pop();
-
-  fill(255, 153);
-  textSize(width * 0.025 + 28 * rProgress); // 依螢幕寬度調整
-
-  textStyle(NORMAL);
-  text(phases[phase], width / 2, height / 2);
-}
-
-function playSoundForPhase(phaseName) {
-  const preset = document.getElementById('presetSelector').value;
-
-  if (preset === 'bhastrika') {
-    bhastrikaAudio.currentTime = 0;
-    bhastrikaAudio.play();
-    return;
-  }
-
-  if (phaseName === 'Inhale') {
-    inhaleAudio.currentTime = 0;
-    inhaleAudio.play();
-  } else if (phaseName === 'Exhale') {
-    const audio = (preset === 'sigh') ? sighAudio : exhaleAudio;
-    audio.currentTime = 0;
-    audio.play();
-  }
-}
-
-
-document.getElementById('presetSelector').addEventListener('change', (e) => {
-  const val = e.target.value;
-  if (val === '4-7-8') {
-    inhaleTime.value = 4; hold1Time.value = 7; exhaleTime.value = 8; hold2Time.value = 0;
-  } else if (val === 'box') {
-    inhaleTime.value = 4; hold1Time.value = 4; exhaleTime.value = 4; hold2Time.value = 4;
-  } else if (val === 'sigh') {
-    inhaleTime.value = 4; hold1Time.value = 0; exhaleTime.value = 8; hold2Time.value = 0;
-  } else if (val === 'sleep') {
-    inhaleTime.value = 4; hold1Time.value = 0; exhaleTime.value = 6; hold2Time.value = 0;
-  } else if (val === 'bhastrika') {
-    inhaleTime.value = 0.3; hold1Time.value = 0; exhaleTime.value = 0.3; hold2Time.value = 0;
-  } else if (val === 'kapalabhati') {
-    inhaleTime.value = 0.5; hold1Time.value = 0; exhaleTime.value = 0.5; hold2Time.value = 0;
-  }
-  updateDurationsFromInputs();
-});
-
-function updateDurationsFromInputs() {
-  phaseDurations = [
-    parseFloat(inhaleTime.value),
-    parseFloat(hold1Time.value),
-    parseFloat(exhaleTime.value),
-    parseFloat(hold2Time.value)
-  ];
-}
-
-document.getElementById('playBtn').addEventListener('click', () => {
-  const preset = document.getElementById('presetSelector').value;
-
-  isPlaying = !isPlaying;
-
-  if (isPlaying) {
-    // 根據呼吸法切換背景音樂
-    if (preset === 'bhastrika') {
-      bgmAudio.src = 'https://github.com/monica30810/learning-project/raw/refs/heads/main/AwakeMySoul.mp3';
-      bgmAudio.currentTime = 3; // 從第 3 秒開始
-    } else {
-      bgmAudio.src = 'https://raw.githubusercontent.com/monica30810/learning-project/main/The_Sirens_of_Titan.mp3';
-    }
-    bgmAudio.play().catch(e => console.warn('音樂播放失敗', e));
-    lastSwitchTime = millis() / 1000;
-    playBtn.innerText = 'Ⅱ';
-  } else {
-    bgmAudio.pause();
-    playBtn.innerText = '▷';
-  }
-});
-
-
-function enableDrag() {
-  const el = document.getElementById('controls');
-  let isDragging = false;
-  let dragOffsetX = 0, dragOffsetY = 0;
-
-  el.addEventListener('mousedown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'BUTTON') return;
-    isDragging = true;
-    dragOffsetX = e.clientX - el.offsetLeft;
-    dragOffsetY = e.clientY - el.offsetTop;
-    document.body.style.userSelect = 'none';
-    el.style.cursor = 'grabbing';
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    const maxLeft = window.innerWidth - el.offsetWidth;
-    const maxTop = window.innerHeight - el.offsetHeight;
-    let newLeft = Math.max(0, Math.min(e.clientX - dragOffsetX, maxLeft));
-    let newTop = Math.max(0, Math.min(e.clientY - dragOffsetY, maxTop));
-    el.style.left = `${newLeft}px`;
-    el.style.top = `${newTop}px`;
-  });
-
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-    document.body.style.userSelect = 'auto';
-    el.style.cursor = 'move';
-  });
-}
-
-window.addEventListener('load', () => {
-  const el = document.getElementById('controls');
-  const left = (window.innerWidth - el.offsetWidth) / 2;
-  const bottom = 20;
-  el.style.left = `${left}px`;
-  el.style.top = `${window.innerHeight - el.offsetHeight - bottom}px`;
-});
-</script>
 </body>
 </html>
