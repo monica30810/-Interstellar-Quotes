@@ -12,6 +12,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>極光呼吸引導</title>
   <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Noto+Serif+TC&display=swap" rel="stylesheet">
@@ -22,17 +23,19 @@
       overflow: hidden;
       height: 100%;
       background-color: #0b0b14;
-      font-family: sans-serif, 'Noto Serif TC', 'Playfair Display', serif;
+      font-family: 'Noto Serif TC', 'Playfair Display', serif, sans-serif;
+      font-size: 16px; /* 基準字體，rem 相對這個 */
     }
+
     #controls {
       position: fixed;
-      align-items: center; /* ✅ 垂直置中對齊所有項目 */
+      align-items: center;
       transform: translateX(-50%);
       background: rgba(255, 255, 255, 0.05);
-      padding: 12px 20px;
-      border-radius: 16px;
+      padding: 0.75rem 1.25rem;
+      border-radius: 1rem;
       color: #fff;
-      font-size: 14px;
+      font-size: 0.9rem;
       text-align: left;
       z-index: 10;
       box-shadow: 0 0 12px rgba(255,255,255,0.5);
@@ -40,30 +43,51 @@
       overflow: auto;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 0.6rem;
       cursor: move;
       min-width: 185px;
-      max-width: 50vw;
+      max-width: 90vw;
       max-height: 40vh;
     }
-    #controls input, #controls select {
+
+    #controls input,
+    #controls select {
       background: rgba(255,255,255,0.1);
       color: white;
       border: none;
       border-radius: 6px;
-      padding: 4px 6px;
+      padding: 0.25rem 0.4rem;
+      font-size: 0.95rem;
     }
+
     #controls button {
       background: rgba(255,255,255,0.4);
       border: none;
       color: white;
-      font-size: 16px;
+      font-size: 1.1rem;
       border-radius: 6px;
       cursor: pointer;
-      padding: 4px 6px;
+      padding: 0.35rem 0.7rem;
+    }
+
+    /* 📱 手機版額外優化 */
+    @media (max-width: 480px) {
+      #controls {
+        flex-direction: column;
+        max-width: 95vw;
+        font-size: 1rem;
+      }
+
+      #controls input,
+      #controls select,
+      #controls button {
+        width: 100%;
+        box-sizing: border-box;
+      }
     }
   </style>
 </head>
+
 <body>
 <div id="controls">
   呼吸法：
@@ -170,7 +194,8 @@ currentR = lerp(currentR, targetR, easing);
   pop();
 
   fill(255, 153);
-  textSize(18 + 28 * rProgress);
+  textSize(width * 0.025 + 28 * rProgress); // 依螢幕寬度調整
+
   textStyle(NORMAL);
   text(phases[phase], width / 2, height / 2);
 }
