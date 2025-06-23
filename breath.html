@@ -1,134 +1,110 @@
 <!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>呼吸法-呼吸音效</title>
-  
-
-</head>
-<body>
-<!-- partial:index.partial.html -->
-<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>極光呼吸引導</title>
+  <!-- 加入 p5.js 與字體 -->
   <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Noto+Serif+TC&display=swap" rel="stylesheet">
   <style>
+    /* 全域樣式 */
     html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      height: 100%;
+      margin: 0; padding: 0;
       background-color: #0b0b14;
-      font-family: 'Noto Serif TC', 'Playfair Display', serif, sans-serif;
-      font-size: 16px; /* 基準字體，rem 相對這個 */
+      overflow: hidden;
+      font-family: 'Noto Serif TC', serif;
+      height: 100%;
     }
 
+    /* 控制面板：共用樣式 */
     #controls {
-      position: fixed;
-      align-items: center;
-      transform: translateX(-50%);
       background: rgba(255, 255, 255, 0.05);
-      padding: 0.75rem 1.25rem;
+      padding: 0.75rem 1rem;
       border-radius: 1rem;
-      color: #fff;
+      color: white;
       font-size: 0.9rem;
-      text-align: left;
-      z-index: 10;
-      box-shadow: 0 0 12px rgba(255,255,255,0.5);
-      resize: both;
-      overflow: auto;
+      box-shadow: 0 0 12px rgba(255,255,255,0.3);
       display: flex;
       flex-wrap: wrap;
       gap: 0.6rem;
-      cursor: move;
-      min-width: 185px;
       max-width: 90vw;
-      max-height: 40vh;
+      z-index: 999;
     }
 
-    #controls input,
-    #controls select {
+    #controls input, #controls select {
       background: rgba(255,255,255,0.1);
       color: white;
       border: none;
       border-radius: 6px;
-      padding: 0.25rem 0.4rem;
-      font-size: 0.95rem;
+      padding: 0.25rem 0.5rem;
+      font-size: 1rem;
     }
 
     #controls button {
       background: rgba(255,255,255,0.4);
       border: none;
       color: white;
-      font-size: 1.1rem;
+      font-size: 1rem;
       border-radius: 6px;
+      padding: 0.4rem 0.8rem;
       cursor: pointer;
-      padding: 0.35rem 0.7rem;
     }
 
-    /* 📱 手機版額外優化 */
-@media (max-width: 480px) {
-  #controlPanel {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 95vw; /* 寬度不超過螢幕 */
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* 水平置中內部 */
-    justify-content: center;
-    padding: 12px;
-    gap: 8px;
-    border-radius: 20px 20px 0 0;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-    background-color: rgba(20, 20, 30, 0.9);
-    z-index: 999;
-  }
+    /* 電腦版樣式（可拖曳） */
+    @media (min-width: 481px) {
+      #controls {
+        position: fixed;
+        left: 50%;
+        bottom: 20px;
+        transform: translateX(-50%);
+        cursor: move;
+        resize: both;
+        overflow: auto;
+        min-width: 200px;
+        max-height: 40vh;
+      }
+    }
 
-  .row {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .row label,
-  .row input,
-  .row select,
-  .row button {
-    font-size: 16px;
-    min-width: 60px;
-  }
-}
-
-
+    /* 手機版樣式（固定底部） */
+    @media (max-width: 480px) {
+      #controls {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        flex-direction: column;
+        border-radius: 20px 20px 0 0;
+        width: 95vw;
+        padding: 12px;
+        gap: 10px;
+      }
+    }
   </style>
 </head>
-
 <body>
-<div id="controlPanel">
-  <div class="row">
-    <label>呼吸法：</label>
-    <select>...</select>
-    <button>▶</button>
+  <div id="controls">
+    <div class="row">
+      <label>呼吸法：</label>
+      <select id="presetSelector">
+        <option value="sleep">放鬆呼吸</option>
+        <option value="4-7-8">4-7-8</option>
+        <option value="box">方形呼吸</option>
+        <option value="sigh">嘆氣式</option>
+        <option value="bhastrika">風箱式</option>
+        <option value="kapalabhati">顱頂發光</option>
+      </select>
+      <button id="playBtn">▷</button>
+    </div>
+    <div class="row">
+      <label>吸</label><input id="inhaleTime" value="4" />
+      <label>停</label><input id="hold1Time" value="0" />
+    </div>
+    <div class="row">
+      <label>吐</label><input id="exhaleTime" value="6" />
+      <label>停</label><input id="hold2Time" value="0" />
+    </div>
   </div>
-  <div class="row">
-    <label>吸</label><input />
-    <label>停</label><input />
-  </div>
-  <div class="row">
-    <label>吐</label><input />
-    <label>停</label><input />
-  </div>
-</div>
-
 
 
 <script>
@@ -333,9 +309,5 @@ window.addEventListener('load', () => {
   el.style.top = `${window.innerHeight - el.offsetHeight - bottom}px`;
 });
 </script>
-</body>
-</html>
-<!-- partial -->
-  
 </body>
 </html>
