@@ -71,20 +71,29 @@
     }
 
     /* 📱 手機版額外優化 */
-    @media (max-width: 480px) {
-      #controls {
-        flex-direction: column;
-        max-width: 95vw;
-        font-size: 1rem;
-      }
+@media (max-width: 480px) {
+  #controls {
+    flex-direction: column;
+    max-width: 90vw;
+    font-size: 1rem;
+    left: 50% !important;
+    transform: translateX(-50%);
+    right: auto;
+    bottom: 20px;
+    top: auto !important;
+    align-items: stretch;
+    overflow-y: auto;
+  }
 
-      #controls input,
-      #controls select,
-      #controls button {
-        width: 100%;
-        box-sizing: border-box;
-      }
-    }
+  #controls input,
+  #controls select,
+  #controls button {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+  }
+}
+
   </style>
 </head>
 
