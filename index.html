@@ -1,19 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>星際語錄-stick</title>
-  
-
-</head>
-<body>
-<!-- partial:index.partial.html -->
-<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>語錄宇宙開場</title>
   <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       overflow: hidden;
@@ -141,16 +136,7 @@
       border-radius: 10px;
     }
 
-    #volumeControl::-webkit-slider-thumb {
-      appearance: none;
-      width: 12px;
-      height: 12px;
-      background: white;
-      border-radius: 50%;
-      cursor: pointer;
-      border: none;
-    }
-
+    #volumeControl::-webkit-slider-thumb,
     #volumeControl::-moz-range-thumb {
       width: 12px;
       height: 12px;
@@ -163,6 +149,29 @@
     #musicControl:hover #volumeControl {
       opacity: 1;
       pointer-events: auto;
+    }
+
+    /* 響應式設計 */
+    @media (max-width: 768px) {
+      #quoteBox {
+        font-size: 16px;
+        max-width: 90vw;
+        padding: 0 10px;
+      }
+
+      #generateBtn {
+        font-size: 16px;
+        padding: 12px 28px;
+      }
+
+      #musicControl {
+        bottom: 12px;
+        right: 12px;
+      }
+
+      #volumeControl {
+        width: 90px;
+      }
     }
   </style>
 </head>
@@ -275,9 +284,5 @@
       bgm.volume = parseFloat(volumeSlider.value);
     });
   </script>
-</body>
-</html>
-<!-- partial -->
-  
 </body>
 </html>
