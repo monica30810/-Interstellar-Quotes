@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>星際語錄-stick</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>語錄宇宙開場</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    #quoteBox {
+      position: absolute;
+      top: 42%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 20px;
+      text-align: center;
+      max-width: 80vw;
+      line-height: 1.6;
+      z-index: 10;
+    }
+
+    .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translate(0, 0);
+      animation: gather 0.8s ease-out forwards;
+    }
+
+    @keyframes gather {
+      0% {
+        opacity: 0;
+        transform: translate(var(--x), var(--y)) scale(0.3);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+      }
+    }
+
+    #generateBtn {
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 36px;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: #ffffffcc;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 30px;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 12px rgba(145, 110, 255, 0.3),
+                  0 0 30px rgba(100, 200, 255, 0.15) inset;
+      transition: all 0.35s ease;
+      cursor: pointer;
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    #generateBtn:hover {
+      color: #ffffff;
+      background: rgba(30, 30, 60, 0.6);
+      box-shadow: 0 0 16px rgba(150, 130, 255, 0.6),
+                  0 0 40px rgba(100, 200, 255, 0.3) inset;
+      transform: translateX(-50%) translateY(-2px) scale(1.03);
+    }
+
+    #generateBtn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-25deg);
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    #generateBtn:hover::before {
+      opacity: 1;
+      animation: shine 1.2s ease-out infinite;
+    }
+
+    @keyframes shine {
+      0% { left: -75%; }
+      100% { left: 125%; }
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #musicControl {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #toggleMusic {
+      background: rgba(255, 255, 255, 0.7);
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    #volumeControl {
+      appearance: none;
+      width: 120px;
+      height: 6px;
+      margin-bottom: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+    }
+
+    #volumeControl::-webkit-slider-thumb {
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    #volumeControl::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    #musicControl:hover #volumeControl {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <audio id="sparkleSound" src="https://github.com/monica30810/learning-project/raw/refs/heads/main/SparklyGlassTransition.wav"></audio>
+  <div id="quoteBox">你正走在時空的某個縫隙中，這是宇宙今天想給你的訊號。</div>
+  <button id="generateBtn">✨ 接收星際語錄 ✨</button>
+
+  <audio id="bgm" loop autoplay>
+    <source src="https://github.com/monica30810/learning-project/raw/refs/heads/main/AwakeMySoul.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="musicControl">
+    <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.6" />
+    <button id="toggleMusic">🔊</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script>
+    const quotes = [
+      "真正的自由，不在於擁有，而在於能選擇自己的反應。——維克多・弗蘭克",
+      "我們看世界的方式，決定了我們是誰。——卡爾・榮格",
+      "最深的恐懼，不是失去他人，而是失去自我。——榮格",
+      "接納自己的黑暗，是邁向完整的開始。——榮格",
+      "痛苦常常是一封來自內心的信。——弗洛姆"
+    ];
+
+    const quoteBox = document.getElementById("quoteBox");
+    const btn = document.getElementById("generateBtn");
+    const sparkleSound = document.getElementById("sparkleSound");
+
+    btn.addEventListener("click", () => {
+      const quote = quotes[Math.floor(Math.random() * quotes.length)];
+      quoteBox.innerHTML = '';
+      [...quote].forEach((char, i) => {
+        const span = document.createElement("span");
+        span.textContent = char;
+        span.classList.add("char");
+        span.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
+        span.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
+        span.style.animationDelay = `${i * 15}ms`;
+        quoteBox.appendChild(span);
+      });
+      sparkleSound.currentTime = 0;
+      sparkleSound.play().catch(e => console.log("音效播放失敗：", e));
+    });
+
+    // 星空背景
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+    camera.position.z = 400;
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const particleCount = 800;
+    const geometry = new THREE.BufferGeometry();
+    const positions = [], colors = [], color = new THREE.Color();
+
+    for (let i = 0; i < particleCount; i++) {
+      positions.push((Math.random() - 0.5) * 1000);
+      positions.push((Math.random() - 0.5) * 1000);
+      positions.push((Math.random() - 0.5) * 1000);
+      color.setHSL(i / particleCount, 1.0, 0.7);
+      colors.push(color.r, color.g, color.b);
+    }
+
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({ size: 2.5, vertexColors: true });
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      particles.rotation.y += 0.0005;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // 音樂控制
+    const bgm = document.getElementById("bgm");
+    const toggleBtn = document.getElementById("toggleMusic");
+    const volumeSlider = document.getElementById("volumeControl");
+
+    bgm.volume = parseFloat(volumeSlider.value);
+    let isPlaying = true;
+    bgm.play().catch(err => console.log("音樂播放失敗:", err));
+
+    toggleBtn.addEventListener("click", () => {
+      if (isPlaying) {
+        bgm.pause();
+        toggleBtn.textContent = "🔇";
+      } else {
+        bgm.play().catch(err => console.log("音樂播放失敗:", err));
+        toggleBtn.textContent = "🔊";
+      }
+      isPlaying = !isPlaying;
+    });
+
+    volumeSlider.addEventListener("input", () => {
+      bgm.volume = parseFloat(volumeSlider.value);
+    });
+  </script>
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
