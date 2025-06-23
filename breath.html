@@ -130,22 +130,21 @@
 
 <body>
 <div id="controls">
-  呼吸法：
-  <select id="presetSelector">
-    <option value="">自訂呼吸節奏</option>
-    <option value="4-7-8">舒緩焦慮 4-7-8</option>
-    <option value="box">集中注意力 4-4-4-4</option>
-    <option value="sigh">舒緩激動情緒(嘴巴吐氣)</option>
-    <option value="sleep">無法入睡(左鼻孔呼吸)</option>
-    <option value="bhastrika">打通能量通道(快速吸吐)</option>
-   <!--  <option value="kapalabhati">能量上升</option> -->
-  </select>
-  吸氣 <input type="number" id="inhaleTime" value="4" min="1" max="20">
-  停 <input type="number" id="hold1Time" value="0" min="0" max="20">
-  吐氣 <input type="number" id="exhaleTime" value="6" min="1" max="20">
-  停 <input type="number" id="hold2Time" value="0" min="0" max="20">
-  <button id="playBtn">▷</button>
+  <div class="control-row">
+    <label for="patternSelect">呼吸法：</label>
+    <select id="patternSelect">…</select>
+    <button id="playPauseBtn">▶</button>
+  </div>
+  <div class="control-row">
+    <label>吸氣</label><input type="number" id="inhaleInput">
+    <label>停</label><input type="number" id="hold1Input">
+  </div>
+  <div class="control-row">
+    <label>吐氣</label><input type="number" id="exhaleInput">
+    <label>停</label><input type="number" id="hold2Input">
+  </div>
 </div>
+
 
 <script>
 let phase = 0;
