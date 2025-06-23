@@ -61,75 +61,58 @@
     }
 
     /* 📱 手機版額外優化 */
-@media (min-width: 481px) {
-      #controls {
+@media (max-width: 480px) {
+  #controls {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 20px 20px 0 0;
+    width: 95vw;
+    padding: 12px;
+    gap: 10px;
+    flex-direction: column;
+  }
+
+  #controls .row {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  #controls .row select {
+    flex: 1.5;
+    min-width: 120px;
+  }
+
+  #controls .row button {
+    flex: 0 0 auto;
+  }
+
+  #controls input[type="number"] {
+    width: 3.5rem;
+  }
+
+  #controls .timing-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 8px;
+  }
+
+  #controls .timing-row label {
+    flex: 0 0 auto;
+    margin-right: 0.25rem;
+  }
+
+  #controls .timing-row input {
+    flex: 1;
+    max-width: 3.5rem;
+  }
 }
 
-#controls .row:first-child {
-  flex-wrap: nowrap;
-  justify-content: space-between;
-}
-
-#controls .row:first-child label {
-  margin-right: 0.5rem;
-}
-
-#controls .row:first-child select {
-  flex: 1;
-  min-width: 120px;
-  max-width: 180px;
-  margin-right: 0.5rem;
-}
-
-#controls .row:first-child button {
-  flex-shrink: 0;
-}
-#controls {
-        position: fixed;
-        left: 50%;
-        bottom: 20px;
-        transform: translateX(-50%);
-        cursor: move;
-        resize: both;
-        overflow: auto;
-        min-width: 200px;
-        max-height: 40vh;
-      }
-    }
-    @media (max-width: 480px) {
-      #controls {
-}
-
-#controls .row:first-child {
-  flex-wrap: nowrap;
-  justify-content: space-between;
-}
-
-#controls .row:first-child label {
-  margin-right: 0.5rem;
-}
-
-#controls .row:first-child select {
-  flex: 1;
-  min-width: 120px;
-  max-width: 180px;
-  margin-right: 0.5rem;
-}
-
-#controls .row:first-child button {
-  flex-shrink: 0;
-}
-#controls {
-        position: fixed;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        border-radius: 20px 20px 0 0;
-        width: 95vw;
-        padding: 12px;
-        gap: 10px;
-      }
-    }
 
   </style>
 </head>
@@ -137,22 +120,34 @@
 <body>
   
 <div id="controls">
-  呼吸法：
-  <select id="presetSelector">
-    <option value="">自訂呼吸節奏</option>
-    <option value="4-7-8">舒緩焦慮 4-7-8</option>
-    <option value="box">集中注意力 4-4-4-4</option>
-    <option value="sigh">舒緩激動情緒(嘴巴吐氣)</option>
-    <option value="sleep">無法入睡(左鼻孔呼吸)</option>
-    <option value="bhastrika">打通能量通道(快速吸吐)</option>
-   <!--  <option value="kapalabhati">能量上升</option> -->
-  </select>
-  吸氣 <input type="number" id="inhaleTime" value="4" min="1" max="20">
-  停 <input type="number" id="hold1Time" value="0" min="0" max="20">
-  吐氣 <input type="number" id="exhaleTime" value="6" min="1" max="20">
-  停 <input type="number" id="hold2Time" value="0" min="0" max="20">
-  <button id="playBtn">▷</button>
+  <div class="row">
+    <label for="presetSelector">呼吸法：</label>
+    <select id="presetSelector">
+      <option value="">自訂呼吸節奏</option>
+      <option value="4-7-8">舒緩焦慮 4-7-8</option>
+      <option value="box">集中注意力 4-4-4-4</option>
+      <option value="sigh">舒緩激動情緒(嘴巴吐氣)</option>
+      <option value="sleep">無法入睡(左鼻孔呼吸)</option>
+      <option value="bhastrika">打通能量通道(快速吸吐)</option>
+    </select>
+    <button id="playBtn">▷</button>
+  </div>
+
+  <div class="timing-row">
+    <label>吸</label>
+    <input type="number" id="inhaleTime" value="4" min="1" max="20">
+    <label>停</label>
+    <input type="number" id="hold1Time" value="0" min="0" max="20">
+  </div>
+
+  <div class="timing-row">
+    <label>吐</label>
+    <input type="number" id="exhaleTime" value="6" min="1" max="20">
+    <label>停</label>
+    <input type="number" id="hold2Time" value="0" min="0" max="20">
+  </div>
 </div>
+
 
 <script>
 let phase = 0;
