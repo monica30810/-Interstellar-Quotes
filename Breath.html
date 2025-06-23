@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>呼吸法-呼吸音效</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>極光呼吸引導</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Noto+Serif+TC&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background-color: #0b0b14;
+      font-family: 'Noto Serif TC', 'Playfair Display', serif, sans-serif;
+      font-size: 16px; /* 基準字體，rem 相對這個 */
+    }
+
+    #controls {
+      position: fixed;
+      align-items: center;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.75rem 1.25rem;
+      border-radius: 1rem;
+      color: #fff;
+      font-size: 0.9rem;
+      text-align: left;
+      z-index: 10;
+      box-shadow: 0 0 12px rgba(255,255,255,0.5);
+      resize: both;
+      overflow: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      cursor: move;
+      min-width: 185px;
+      max-width: 90vw;
+      max-height: 40vh;
+    }
+
+    #controls input,
+    #controls select {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.25rem 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    #controls button {
+      background: rgba(255,255,255,0.4);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 0.35rem 0.7rem;
+    }
+
+    /* 📱 手機版額外優化 */
+@media (max-width: 480px) {
+  #controls {
+    flex-direction: column;
+    max-width: 90vw;
+    font-size: 1rem;
+    left: 50% !important;
+    transform: translateX(-50%);
+    right: auto;
+    bottom: 20px;
+    top: auto !important;
+    align-items: stretch;
+    overflow-y: auto;
+  }
+
+  #controls input,
+  #controls select,
+  #controls button {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+  }
+}
+
+  </style>
+</head>
+
+<body>
+<div id="controls">
+  呼吸法：
+  <select id="presetSelector">
+    <option value="">自訂呼吸節奏</option>
+    <option value="4-7-8">舒緩焦慮 4-7-8</option>
+    <option value="box">集中注意力 4-4-4-4</option>
+    <option value="sigh">舒緩激動情緒(嘴巴吐氣)</option>
+    <option value="sleep">無法入睡(左鼻孔呼吸)</option>
+    <option value="bhastrika">打通能量通道(快速吸吐)</option>
+   <!--  <option value="kapalabhati">能量上升</option> -->
+  </select>
+  吸氣 <input type="number" id="inhaleTime" value="4" min="1" max="20">
+  停 <input type="number" id="hold1Time" value="0" min="0" max="20">
+  吐氣 <input type="number" id="exhaleTime" value="6" min="1" max="20">
+  停 <input type="number" id="hold2Time" value="0" min="0" max="20">
+  <button id="playBtn">▷</button>
+</div>
+
+<script>
+let phase = 0;
+let phases = ['Inhale', 'Hold1', 'Exhale', 'Hold2'];
+let phaseDurations = [4, 0, 6, 0];
+let lastSwitchTime = 0;
+let currentR = 0;
+let isPlaying = false;
+
+let bgmAudio = new Audio('https://raw.githubusercontent.com/monica30810/learning-project/main/The_Sirens_of_Titan.mp3');
+bgmAudio.loop = true;
+bgmAudio.volume = 0.5;
+
+let inhaleAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/inhale.mp3');
+let exhaleAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/exhale.mp3');
+let sighAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/Sign.wav');
+let bhastrikaAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/Inhale-Exhale-Sharp.wav');
+bhastrikaAudio.volume = 0.5;
+inhaleAudio.volume = 0.2;
+exhaleAudio.volume = 0.2;
+sighAudio.volume = 0.5;
+
+const auroraColors = [
+  ['#7FDBFF', '#0074D9'],
+  ['#39CCCC', '#3D9970'],
+  ['#B10DC9', '#85144b'],
+  ['#FFDC00', '#FF851B'],
+  ['#FF69B4', '#C71585'],
+  ['#00FA9A', '#2E8B57'],
+];
+let currentColorIndex = 0;
+let outerColor;
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  textAlign(CENTER, CENTER);
+  noStroke();
+  outerColor = color(auroraColors[0][1]);
+  updateDurationsFromInputs();
+  enableDrag();
+}
+
+function draw() {
+  background('#0b0b14');
+  if (!isPlaying) return;
+
+  let now = millis() / 1000;
+  if (now - lastSwitchTime >= phaseDurations[phase]) {
+    phase = (phase + 1) % 4;
+    lastSwitchTime = now;
+    if (phase === 0) {
+      currentColorIndex = (currentColorIndex + 1) % auroraColors.length;
+      outerColor = color(auroraColors[currentColorIndex][1]);
+      playSoundForPhase('Inhale');
+    } else if (phase === 2) {
+      playSoundForPhase('Exhale');
+    }
+  }
+
+  let t = constrain((now - lastSwitchTime) / phaseDurations[phase], 0, 1);
+  let rProgress = (phases[phase] === 'Inhale') ? t :
+                  (phases[phase] === 'Exhale') ? 1 - t :
+                  (phases[phase] === 'Hold1') ? 1 : 0;
+
+const maxR = min(width, height) * 0.35;
+const targetR = maxR * (0.4 + 0.6 * rProgress);
+
+let easing = 0.07; // 預設為平滑的速度
+if (phases[phase] === 'Inhale') {
+  easing = 0.04; // 吸氣變大更慢
+} else if (phases[phase] === 'Exhale') {
+  easing = 0.12; // 吐氣縮小更快
+}
+
+currentR = lerp(currentR, targetR, easing);
+
+  push();
+  translate(width / 2, height / 2);
+  let centerColor = color(10, 10, 10);
+  for (let i = 80; i > 0; i--) {
+    let amt = i / 80;
+    let c = lerpColor(centerColor, outerColor, amt);
+    fill(c);
+    ellipse(0, 0, currentR * 2 * amt);
+  }
+  pop();
+
+  fill(255, 153);
+  textSize(width * 0.025 + 28 * rProgress); // 依螢幕寬度調整
+
+  textStyle(NORMAL);
+  text(phases[phase], width / 2, height / 2);
+}
+
+function playSoundForPhase(phaseName) {
+  const preset = document.getElementById('presetSelector').value;
+
+  if (preset === 'bhastrika') {
+    bhastrikaAudio.currentTime = 0;
+    bhastrikaAudio.play();
+    return;
+  }
+
+  if (phaseName === 'Inhale') {
+    inhaleAudio.currentTime = 0;
+    inhaleAudio.play();
+  } else if (phaseName === 'Exhale') {
+    const audio = (preset === 'sigh') ? sighAudio : exhaleAudio;
+    audio.currentTime = 0;
+    audio.play();
+  }
+}
+
+
+document.getElementById('presetSelector').addEventListener('change', (e) => {
+  const val = e.target.value;
+  if (val === '4-7-8') {
+    inhaleTime.value = 4; hold1Time.value = 7; exhaleTime.value = 8; hold2Time.value = 0;
+  } else if (val === 'box') {
+    inhaleTime.value = 4; hold1Time.value = 4; exhaleTime.value = 4; hold2Time.value = 4;
+  } else if (val === 'sigh') {
+    inhaleTime.value = 4; hold1Time.value = 0; exhaleTime.value = 8; hold2Time.value = 0;
+  } else if (val === 'sleep') {
+    inhaleTime.value = 4; hold1Time.value = 0; exhaleTime.value = 6; hold2Time.value = 0;
+  } else if (val === 'bhastrika') {
+    inhaleTime.value = 0.3; hold1Time.value = 0; exhaleTime.value = 0.3; hold2Time.value = 0;
+  } else if (val === 'kapalabhati') {
+    inhaleTime.value = 0.5; hold1Time.value = 0; exhaleTime.value = 0.5; hold2Time.value = 0;
+  }
+  updateDurationsFromInputs();
+});
+
+function updateDurationsFromInputs() {
+  phaseDurations = [
+    parseFloat(inhaleTime.value),
+    parseFloat(hold1Time.value),
+    parseFloat(exhaleTime.value),
+    parseFloat(hold2Time.value)
+  ];
+}
+
+document.getElementById('playBtn').addEventListener('click', () => {
+  const preset = document.getElementById('presetSelector').value;
+
+  isPlaying = !isPlaying;
+
+  if (isPlaying) {
+    // 根據呼吸法切換背景音樂
+    if (preset === 'bhastrika') {
+      bgmAudio.src = 'https://github.com/monica30810/learning-project/raw/refs/heads/main/AwakeMySoul.mp3';
+      bgmAudio.currentTime = 3; // 從第 3 秒開始
+    } else {
+      bgmAudio.src = 'https://raw.githubusercontent.com/monica30810/learning-project/main/The_Sirens_of_Titan.mp3';
+    }
+    bgmAudio.play().catch(e => console.warn('音樂播放失敗', e));
+    lastSwitchTime = millis() / 1000;
+    playBtn.innerText = 'Ⅱ';
+  } else {
+    bgmAudio.pause();
+    playBtn.innerText = '▷';
+  }
+});
+
+
+function enableDrag() {
+  const el = document.getElementById('controls');
+  let isDragging = false;
+  let dragOffsetX = 0, dragOffsetY = 0;
+
+  el.addEventListener('mousedown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'BUTTON') return;
+    isDragging = true;
+    dragOffsetX = e.clientX - el.offsetLeft;
+    dragOffsetY = e.clientY - el.offsetTop;
+    document.body.style.userSelect = 'none';
+    el.style.cursor = 'grabbing';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const maxLeft = window.innerWidth - el.offsetWidth;
+    const maxTop = window.innerHeight - el.offsetHeight;
+    let newLeft = Math.max(0, Math.min(e.clientX - dragOffsetX, maxLeft));
+    let newTop = Math.max(0, Math.min(e.clientY - dragOffsetY, maxTop));
+    el.style.left = `${newLeft}px`;
+    el.style.top = `${newTop}px`;
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    document.body.style.userSelect = 'auto';
+    el.style.cursor = 'move';
+  });
+}
+
+window.addEventListener('load', () => {
+  const el = document.getElementById('controls');
+  const left = (window.innerWidth - el.offsetWidth) / 2;
+  const bottom = 20;
+  el.style.left = `${left}px`;
+  el.style.top = `${window.innerHeight - el.offsetHeight - bottom}px`;
+});
+</script>
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
