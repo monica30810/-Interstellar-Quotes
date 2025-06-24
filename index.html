@@ -262,11 +262,15 @@
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.z = 400;
+
     const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
+
     const particleCount = 800;
     const geometry = new THREE.BufferGeometry();
     const positions = [], colors = [], color = new THREE.Color();
+
     for (let i = 0; i < particleCount; i++) {
       positions.push((Math.random() - 0.5) * 1000);
       positions.push((Math.random() - 0.5) * 1000);
@@ -274,8 +278,10 @@
       color.setHSL(i / particleCount, 1.0, 0.7);
       colors.push(color.r, color.g, color.b);
     }
+
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
     const material = new THREE.PointsMaterial({ size: 2.5, vertexColors: true });
     const particles = new THREE.Points(geometry, material);
     scene.add(particles);
