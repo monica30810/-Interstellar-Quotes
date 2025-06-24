@@ -35,6 +35,14 @@
       transform: translate(0, 0);
       animation: gather 0.8s ease-out forwards;
     }
+.author {
+  display: block;
+  margin-top: 12px;
+  opacity: 0.6;
+  font-size: 0.9em;
+}
+
+
 
     @keyframes gather {
       0% {
@@ -206,7 +214,7 @@
         const random = data[Math.floor(Math.random() * data.length)];
         const quote = random.quote || "✨ 宇宙的訊息來不及傳送 ✨";
         const author = random.author || "";
-        displayQuoteWithAnimation(`${quote}\n${author ? '——' + author : ''}`);
+        displayQuoteWithAnimation(`${quote}\n${author ? '—— ' + author : ''}`);
       } catch (err) {
         console.error("語錄讀取失敗", err);
         displayQuoteWithAnimation("✨ 宇宙的訊息來不及傳送 ✨");
@@ -214,24 +222,35 @@
     }
 
     function displayQuoteWithAnimation(text) {
-      quoteBox.innerHTML = '';
-      const chars = [...text];
-      chars.forEach((char, i) => {
-        const span = document.createElement("span");
-        span.textContent = char;
-        if (char === '\n') {
-          quoteBox.appendChild(document.createElement("br"));
-          return;
-        }
-        span.classList.add("char");
-        span.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
-        span.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
-        span.style.animationDelay = `${i * 15}ms`;
-        quoteBox.appendChild(span);
-      });
-      sparkleSound.currentTime = 0;
-      sparkleSound.play().catch(e => console.log("音效播放失敗：", e));
-    }
+  quoteBox.innerHTML = '';
+
+  // 切開語錄與作者
+  const [quotePart, authorPart] = text.split('\n');
+  
+  // 建立動畫語錄（每字進場）
+  const chars = [...quotePart];
+  chars.forEach((char, i) => {
+    const span = document.createElement("span");
+    span.textContent = char;
+    span.classList.add("char");
+    span.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
+    span.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
+    span.style.animationDelay = `${i * 15}ms`;
+    quoteBox.appendChild(span);
+  });
+
+  // 加上作者（不進入動畫）
+  if (authorPart) {
+    const authorDiv = document.createElement("div");
+    authorDiv.className = "author";
+    authorDiv.textContent = authorPart;
+    quoteBox.appendChild(authorDiv);
+  }
+
+  sparkleSound.currentTime = 0;
+  sparkleSound.play().catch(e => console.log("音效播放失敗：", e));
+}
+
 
     btn.addEventListener("click", fetchQuoteFromSheet);
     window.onload = fetchQuoteFromSheet;
