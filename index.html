@@ -196,33 +196,45 @@
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
   <script>
-    const quotes = [
-      "真正的自由，不在於擁有，而在於能選擇自己的反應。——維克多・弗蘭克",
-      "我們看世界的方式，決定了我們是誰。——卡爾・榮格",
-      "最深的恐懼，不是失去他人，而是失去自我。——榮格",
-      "接納自己的黑暗，是邁向完整的開始。——榮格",
-      "痛苦常常是一封來自內心的信。——弗洛姆"
-    ];
+  const quoteBox = document.getElementById("quoteBox");
+  const btn = document.getElementById("generateBtn");
+  const sparkleSound = document.getElementById("sparkleSound");
 
-    const quoteBox = document.getElementById("quoteBox");
-    const btn = document.getElementById("generateBtn");
-    const sparkleSound = document.getElementById("sparkleSound");
+  async function fetchQuoteFromSheet() {
+    const url = 'https://opensheet.elk.sh/1IeMHdCagm62cWWnW9Qt3eq-bCgst2_gSyptctj4E9WQ/quotes';
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const random = data[Math.floor(Math.random() * data.length)];
+      const quote = random.quote || "✨ 宇宙的訊息來不及傳送 ✨";
+      const author = random.author || "";
+      displayQuoteWithAnimation(`${quote}<br>${author ? '——' + author : ''}`);
+    } catch (err) {
+      console.error("語錄讀取失敗", err);
+      displayQuoteWithAnimation("✨ 宇宙的訊息來不及傳送 ✨");
+    }
+  }
 
-    btn.addEventListener("click", () => {
-      const quote = quotes[Math.floor(Math.random() * quotes.length)];
-      quoteBox.innerHTML = '';
-      [...quote].forEach((char, i) => {
-        const span = document.createElement("span");
-        span.textContent = char;
-        span.classList.add("char");
-        span.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
-        span.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
-        span.style.animationDelay = `${i * 15}ms`;
-        quoteBox.appendChild(span);
-      });
-      sparkleSound.currentTime = 0;
-      sparkleSound.play().catch(e => console.log("音效播放失敗：", e));
+  function displayQuoteWithAnimation(text) {
+    quoteBox.innerHTML = '';
+    const chars = [...text];
+    chars.forEach((char, i) => {
+      const span = document.createElement("span");
+      span.textContent = char;
+      span.classList.add("char");
+      span.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
+      span.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
+      span.style.animationDelay = `${i * 15}ms`;
+      quoteBox.appendChild(span);
     });
+    sparkleSound.currentTime = 0;
+    sparkleSound.play().catch(e => console.log("音效播放失敗：", e));
+  }
+
+  btn.addEventListener("click", fetchQuoteFromSheet);
+
+  // 一開始就載入一則語錄
+  window.onload = fetchQuoteFromSheet;
 
     // 星空背景
     const scene = new THREE.Scene();
