@@ -14,13 +14,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>星際語錄</title>
-  <style>
-    html, body {
-      margin: 0;
-      overflow: hidden;
-      background: black;
-      font-family: 'Noto Sans TC', sans-serif;
-    }
+<style>
+  html, body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+    font-family: 'Noto Sans TC', sans-serif;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
 
     #starCanvas {
       position: fixed;
@@ -45,12 +47,12 @@
   animation: scrollUp 8s linear forwards;
 }/* 調速度 */
     
-@media (max-width: 600px) {
-  .quoteLine {
-    font-size: 16px; /* 更小字體 */
-    max-width: 95vw;  /* 限制最大寬度為螢幕90% */
+  .quoteLine .author {
+    display: block;
+    font-size: 20px;
+    opacity: 0.8;
+    margin-top: 8px;
   }
-}
 
 @keyframes scrollUp {
   0% {
@@ -99,6 +101,18 @@
 
     #volumeSlider {
       width: 100px;
+      
+     @media (max-width: 600px) {
+    .quoteLine {
+      font-size: 18px;
+      max-width: 95vw;
+      padding: 0 2vw;
+    }
+
+    .quoteLine .author {
+      font-size: 15px;
+    }
+  }
     }
   </style>
 </head>
