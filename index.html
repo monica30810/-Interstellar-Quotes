@@ -29,6 +29,17 @@
       z-index: 10;
     }
 
+    .quote-line {
+      display: block;
+    }
+
+    .quote-author {
+      display: block;
+      margin-top: 12px;
+      opacity: 0.8;
+      font-size: 16px;
+    }
+
     .char {
       display: inline-block;
       opacity: 0;
@@ -67,7 +78,7 @@
       cursor: pointer;
       z-index: 10;
       overflow: hidden;
-      white-space: nowrap;** /* 加上這行防止換行 */
+      white-space: nowrap;
     }
 
     #generateBtn:hover {
@@ -154,30 +165,29 @@
 
     /* 響應式設計 */
     @media (max-width: 480px) {
-  #quoteBox {
-    font-size: 16px;
-    max-width: 100vw;       /* 滿版寬 */
-    padding: 0 6vw;         /* 留一點安全邊距 */
-    white-space: normal;        /* 允許換行 */
-    word-break: break-word;     /* 太長的單字也能換 */
-    overflow-wrap: break-word;
-  }
+      #quoteBox {
+        font-size: 16px;
+        max-width: 100vw;
+        padding: 0 6vw;
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
 
-  #generateBtn {
-    font-size: 16px;
-    padding: 12px 28px;
-  }
+      #generateBtn {
+        font-size: 16px;
+        padding: 12px 28px;
+      }
 
-  #musicControl {
-    bottom: 12px;
-    right: 12px;
-  }
+      #musicControl {
+        bottom: 12px;
+        right: 12px;
+      }
 
-  #volumeControl {
-    width: 90px;
-  }
-}
-
+      #volumeControl {
+        width: 90px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -196,59 +206,67 @@
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
   <script>
-  const quoteBox = document.getElementById("quoteBox");
-  const btn = document.getElementById("generateBtn");
-  const sparkleSound = document.getElementById("sparkleSound");
+    const quoteBox = document.getElementById("quoteBox");
+    const btn = document.getElementById("generateBtn");
+    const sparkleSound = document.getElementById("sparkleSound");
 
-  async function fetchQuoteFromSheet() {
-    const url = 'https://opensheet.elk.sh/1IeMHdCagm62cWWnW9Qt3eq-bCgst2_gSyptctj4E9WQ/quotes';
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      const random = data[Math.floor(Math.random() * data.length)];
-      const quote = random.quote || "✨ 宇宙的訊息來不及傳送 ✨";
-      const author = random.author || "";
-      displayQuoteWithAnimation(`${quote}<br>${author ? '——' + author : ''}`);
-    } catch (err) {
-      console.error("語錄讀取失敗", err);
-      displayQuoteWithAnimation("✨ 宇宙的訊息來不及傳送 ✨");
+    async function fetchQuoteFromSheet() {
+      const url = 'https://opensheet.elk.sh/1IeMHdCagm62cWWnW9Qt3eq-bCgst2_gSyptctj4E9WQ/quotes';
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const random = data[Math.floor(Math.random() * data.length)];
+        const quote = random.quote || "✨ 宇宙的訊息來不及傳送 ✨";
+        const author = random.author || "";
+        displayQuoteWithAnimation(`
+          <div class="quote-line">"${quote}"</div>
+          <div class="quote-author">${author ? '——' + author : ''}</div>
+        `);
+      } catch (err) {
+        console.error("語錄讀取失敗", err);
+        displayQuoteWithAnimation("✨ 宇宙的訊息來不及傳送 ✨");
+      }
     }
-  }
 
-  function displayQuoteWithAnimation(text) {
-    quoteBox.innerHTML = '';
-    const chars = [...text];
-    chars.forEach((char, i) => {
-      const span = document.createElement("span");
-      span.textContent = char;
-      span.classList.add("char");
-      span.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
-      span.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
-      span.style.animationDelay = `${i * 15}ms`;
-      quoteBox.appendChild(span);
-    });
-    sparkleSound.currentTime = 0;
-    sparkleSound.play().catch(e => console.log("音效播放失敗：", e));
-  }
+    function displayQuoteWithAnimation(html) {
+      quoteBox.innerHTML = '';
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+      [...temp.childNodes].forEach(node => {
+        if (node.nodeType === 1) {
+          const fragment = document.createDocumentFragment();
+          const chars = [...node.textContent];
+          chars.forEach((char, i) => {
+            const span = document.createElement("span");
+            span.textContent = char;
+            span.classList.add("char");
+            span.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
+            span.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
+            span.style.animationDelay = `${i * 15}ms`;
+            fragment.appendChild(span);
+          });
+          const wrapper = document.createElement("div");
+          wrapper.className = node.className;
+          wrapper.appendChild(fragment);
+          quoteBox.appendChild(wrapper);
+        }
+      });
+      sparkleSound.currentTime = 0;
+      sparkleSound.play().catch(e => console.log("音效播放失敗：", e));
+    }
 
-  btn.addEventListener("click", fetchQuoteFromSheet);
-
-  // 一開始就載入一則語錄
-  window.onload = fetchQuoteFromSheet;
+    btn.addEventListener("click", fetchQuoteFromSheet);
+    window.onload = fetchQuoteFromSheet;
 
     // 星空背景
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
     camera.position.z = 400;
-
     const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-
     const particleCount = 800;
     const geometry = new THREE.BufferGeometry();
     const positions = [], colors = [], color = new THREE.Color();
-
     for (let i = 0; i < particleCount; i++) {
       positions.push((Math.random() - 0.5) * 1000);
       positions.push((Math.random() - 0.5) * 1000);
@@ -256,10 +274,8 @@
       color.setHSL(i / particleCount, 1.0, 0.7);
       colors.push(color.r, color.g, color.b);
     }
-
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-
     const material = new THREE.PointsMaterial({ size: 2.5, vertexColors: true });
     const particles = new THREE.Points(geometry, material);
     scene.add(particles);
