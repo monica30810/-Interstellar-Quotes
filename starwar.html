@@ -221,7 +221,7 @@
       for (let i = 0; i < 3; i++) {
         const html = await fetchQuoteFromSheet();
         displayQuoteWithAnimation(html);
-        await new Promise(resolve => setTimeout(resolve, 2000));// 🔸這行就是間隔 4 秒
+        await new Promise(resolve => setTimeout(resolve, 3000));// 🔸這行就是間隔 ＿ 秒
       }
 
       generating = false;
