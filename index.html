@@ -154,32 +154,30 @@
 
     /* 響應式設計 */
     @media (max-width: 480px) {
-      #quoteBox {
-        font-size: 16px;
-        max-width: 90vw;
-        padding: 0 10px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+  #quoteBox {
+    font-size: 16px;
+    max-width: 90vw;
+    padding: 0 10px;
+    white-space: normal;        /* 允許換行 */
+    word-break: break-word;     /* 太長的單字也能換 */
+    overflow-wrap: break-word;
+  }
+
+  #generateBtn {
+    font-size: 16px;
+    padding: 12px 28px;
+  }
+
+  #musicControl {
+    bottom: 12px;
+    right: 12px;
+  }
+
+  #volumeControl {
+    width: 90px;
   }
 }
 
-      }
-
-      #generateBtn {
-        font-size: 16px;
-        padding: 12px 28px;
-      }
-
-      #musicControl {
-        bottom: 12px;
-        right: 12px;
-      }
-
-      #volumeControl {
-        width: 90px;
-      }
-    }
   </style>
 </head>
 <body>
