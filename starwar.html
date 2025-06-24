@@ -42,12 +42,13 @@
   white-space: normal;
   z-index: 1;
   opacity: 0;
-  animation: scrollUp 10s linear forwards;
+  animation: scrollUp 8s linear forwards;
 }/* 調速度 */
     
 @media (max-width: 600px) {
   .quoteLine {
-    font-size: 20px;
+    font-size: 16px; /* 更小字體 */
+    max-width: 95vw;  /* 限制最大寬度為螢幕90% */
   }
 }
 
@@ -57,7 +58,7 @@
     opacity: 1;
   }
   100% {
-    transform: translateX(-50%) translateY(-800px) scale(0.2) perspective(400px) rotateX(35deg);
+    transform: translateX(-50%) translateY(-600px) scale(0.2) perspective(400px) rotateX(35deg);
     opacity: 0;
   }
 }
@@ -103,7 +104,7 @@
 </head>
 <body>
   <canvas id="starCanvas"></canvas>
-  <button id="generateBtn">✨ 接收星際語錄 ✨</button>
+  <button id="generateBtn">✨ 接收星際訊息 ✨</button>
 
   <audio id="bgm" preload="auto" loop>
     <source src="https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/CaptainSpark.mp3" type="audio/mpeg">
