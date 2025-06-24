@@ -155,178 +155,173 @@
   <div id="controls">
     <div class="row">
       <label>呼吸法：</label>
-      
-<select id="presetSelector">
-  <option value="">自訂呼吸節奏</option>
-  <option value="4-7-8">舒緩焦慮 4-7-8</option>
-  <option value="box">集中注意力 4-4-4-4</option>
-  <option value="sigh">舒緩激動情緒(嘴巴吐氣)</option>
-  <option value="sleep">無法入睡(左鼻孔呼吸)</option>
-  <option value="bhastrika">打通能量通道(快速吸吐)</option>
-</select>
-
+      <select id="presetSelector">
+        <option value="">自訂呼吸節奏</option>
+        <option value="4-7-8">舒緩焦慮 4-7-8</option>
+        <option value="box">集中注意力 4-4-4-4</option>
+        <option value="sigh">舒緩激動情緒(嘴巴吐氣)</option>
+        <option value="sleep">無法入睡(左鼻孔呼吸)</option>
+        <option value="bhastrika">打通能量通道(快速吸吐)</option>
+      </select>
       <button id="playBtn">▷</button>
     </div>
-    <div class="row" style="display: flex; gap: 10px;">
+    <div class="row">
       <label>吸</label><input id="inhaleTime" value="4" />
       <label>停</label><input id="hold1Time" value="0" />
     </div>
-    <div class="row" style="display: flex; gap: 10px;">
+    <div class="row">
       <label>吐</label><input id="exhaleTime" value="6" />
       <label>停</label><input id="hold2Time" value="0" />
     </div>
   </div>
 
-<script>
-let phase = 0;
-let phases = ['Inhale', 'Hold1', 'Exhale', 'Hold2'];
-let phaseDurations = [4, 0, 6, 0];
-let lastSwitchTime = 0;
-let currentR = 0;
-let isPlaying = false;
+  <script>
+    let phase = 0;
+    let phases = ['Inhale', 'Hold1', 'Exhale', 'Hold2'];
+    let phaseDurations = [4, 0, 6, 0];
+    let lastSwitchTime = 0;
+    let currentR = 0;
+    let isPlaying = false;
 
-let bgmAudio = new Audio('https://raw.githubusercontent.com/monica30810/learning-project/main/The_Sirens_of_Titan.mp3');
-bgmAudio.loop = true;
-bgmAudio.volume = 0.5;
+    let bgmAudio = new Audio('https://raw.githubusercontent.com/monica30810/learning-project/main/The_Sirens_of_Titan.mp3');
+    bgmAudio.loop = true;
+    bgmAudio.volume = 0.5;
 
-let inhaleAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/inhale.mp3');
-let exhaleAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/exhale.mp3');
-let sighAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/Sign.wav');
-let bhastrikaAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/Inhale-Exhale-Sharp.wav');
-bhastrikaAudio.volume = 0.5;
-inhaleAudio.volume = 0.2;
-exhaleAudio.volume = 0.2;
-sighAudio.volume = 0.5;
+    let inhaleAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/inhale.mp3');
+    let exhaleAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/exhale.mp3');
+    let sighAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/Sign.wav');
+    let bhastrikaAudio = new Audio('https://github.com/monica30810/learning-project/raw/refs/heads/main/Inhale-Exhale-Sharp.wav');
+    bhastrikaAudio.volume = 0.5;
+    inhaleAudio.volume = 0.2;
+    exhaleAudio.volume = 0.2;
+    sighAudio.volume = 0.5;
 
-const auroraColors = [
-  ['#7FDBFF', '#0074D9'],
-  ['#39CCCC', '#3D9970'],
-  ['#B10DC9', '#85144b'],
-  ['#FFDC00', '#FF851B'],
-  ['#FF69B4', '#C71585'],
-  ['#00FA9A', '#2E8B57'],
-];
-let currentColorIndex = 0;
-let outerColor;
+    const auroraColors = [
+      ['#7FDBFF', '#0074D9'],
+      ['#39CCCC', '#3D9970'],
+      ['#B10DC9', '#85144b'],
+      ['#FFDC00', '#FF851B'],
+      ['#FF69B4', '#C71585'],
+      ['#00FA9A', '#2E8B57'],
+    ];
+    let currentColorIndex = 0;
+    let outerColor;
 
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  textAlign(CENTER, CENTER);
-  noStroke();
-  outerColor = color(auroraColors[0][1]);
-  updateDurationsFromInputs();
-}
-
-function draw() {
-  background('#0b0b14');
-  if (!isPlaying) return;
-
-  let now = millis() / 1000;
-  if (now - lastSwitchTime >= phaseDurations[phase]) {
-    phase = (phase + 1) % 4;
-    lastSwitchTime = now;
-    if (phase === 0) {
-      currentColorIndex = (currentColorIndex + 1) % auroraColors.length;
-      outerColor = color(auroraColors[currentColorIndex][1]);
-      playSoundForPhase('Inhale');
-    } else if (phase === 2) {
-      playSoundForPhase('Exhale');
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      textAlign(CENTER, CENTER);
+      noStroke();
+      outerColor = color(auroraColors[0][1]);
+      updateDurationsFromInputs();
     }
-  }
 
-  let t = constrain((now - lastSwitchTime) / phaseDurations[phase], 0, 1);
-  let rProgress = (phases[phase] === 'Inhale') ? t :
-                  (phases[phase] === 'Exhale') ? 1 - t :
-                  (phases[phase] === 'Hold1') ? 1 : 0;
+    function draw() {
+      background('#0b0b14');
+      if (!isPlaying) return;
 
-  const maxR = min(width, height) * 0.35;
-  const targetR = maxR * (0.4 + 0.6 * rProgress);
+      let now = millis() / 1000;
+      if (now - lastSwitchTime >= phaseDurations[phase]) {
+        phase = (phase + 1) % 4;
+        lastSwitchTime = now;
+        if (phase === 0) {
+          currentColorIndex = (currentColorIndex + 1) % auroraColors.length;
+          outerColor = color(auroraColors[currentColorIndex][1]);
+          playSoundForPhase('Inhale');
+        } else if (phase === 2) {
+          playSoundForPhase('Exhale');
+        }
+      }
 
-  let easing = 0.07;
-  if (phases[phase] === 'Inhale') {
-    easing = 0.04;
-  } else if (phases[phase] === 'Exhale') {
-    easing = 0.12;
-  }
+      let t = constrain((now - lastSwitchTime) / phaseDurations[phase], 0, 1);
+      let rProgress = (phases[phase] === 'Inhale') ? t :
+                      (phases[phase] === 'Exhale') ? 1 - t :
+                      (phases[phase] === 'Hold1') ? 1 : 0;
 
-  currentR = lerp(currentR, targetR, easing);
+      const maxR = min(width, height) * 0.35;
+      const targetR = maxR * (0.4 + 0.6 * rProgress);
 
-  push();
-  translate(width / 2, height / 2);
-  let centerColor = color(10, 10, 10);
-  for (let i = 80; i > 0; i--) {
-    let amt = i / 80;
-    let c = lerpColor(centerColor, outerColor, amt);
-    fill(c);
-    ellipse(0, 0, currentR * 2 * amt);
-  }
-  pop();
+      let easing = 0.07;
+      if (phases[phase] === 'Inhale') easing = 0.04;
+      else if (phases[phase] === 'Exhale') easing = 0.12;
 
-  fill(255, 153);
-  textSize(width * 0.025 + 28 * rProgress);
-  textStyle(NORMAL);
-  text(phases[phase], width / 2, height / 2);
-}
+      currentR = lerp(currentR, targetR, easing);
 
-function playSoundForPhase(phaseName) {
-  const preset = document.getElementById('presetSelector').value;
-  if (preset === 'bhastrika') {
-    bhastrikaAudio.currentTime = 0;
-    bhastrikaAudio.play();
-    return;
-  }
-  if (phaseName === 'Inhale') {
-    inhaleAudio.currentTime = 0;
-    inhaleAudio.play();
-  } else if (phaseName === 'Exhale') {
-    const audio = (preset === 'sigh') ? sighAudio : exhaleAudio;
-    audio.currentTime = 0;
-    audio.play();
-  }
-}
+      push();
+      translate(width / 2, height / 2);
+      let centerColor = color(10, 10, 10);
+      for (let i = 80; i > 0; i--) {
+        let amt = i / 80;
+        let c = lerpColor(centerColor, outerColor, amt);
+        fill(c);
+        ellipse(0, 0, currentR * 2 * amt);
+      }
+      pop();
 
-document.getElementById('presetSelector').addEventListener('change', (e) => {
-  const val = e.target.value;
-  const presets = {
-    '4-7-8': [4, 7, 8, 0],
-    'box': [4, 4, 4, 4],
-    'sigh': [4, 0, 8, 0],
-    'sleep': [4, 0, 6, 0],
-    'bhastrika': [0.3, 0, 0.3, 0],
-    'kapalabhati': [0.5, 0, 0.5, 0]
-  };
-  [inhaleTime.value, hold1Time.value, exhaleTime.value, hold2Time.value] = presets[val];
-  updateDurationsFromInputs();
-});
-
-function updateDurationsFromInputs() {
-  phaseDurations = [
-    parseFloat(inhaleTime.value),
-    parseFloat(hold1Time.value),
-    parseFloat(exhaleTime.value),
-    parseFloat(hold2Time.value)
-  ];
-}
-
-document.getElementById('playBtn').addEventListener('click', () => {
-  const preset = document.getElementById('presetSelector').value;
-  isPlaying = !isPlaying;
-  if (isPlaying) {
-    if (preset === 'bhastrika') {
-      bgmAudio.src = 'https://github.com/monica30810/learning-project/raw/refs/heads/main/AwakeMySoul.mp3';
-      bgmAudio.currentTime = 3;
-    } else {
-      bgmAudio.src = 'https://raw.githubusercontent.com/monica30810/learning-project/main/The_Sirens_of_Titan.mp3';
+      fill(255, 153);
+      textSize(width * 0.025 + 28 * rProgress);
+      text(phases[phase], width / 2, height / 2);
     }
-    bgmAudio.play().catch(e => console.warn('音樂播放失敗', e));
-    lastSwitchTime = millis() / 1000;
-    playBtn.innerText = 'Ⅱ';
-  } else {
-    bgmAudio.pause();
-    playBtn.innerText = '▷';
-  }
-});
-</script>
 
+    function playSoundForPhase(phaseName) {
+      const preset = document.getElementById('presetSelector').value;
+      if (preset === 'bhastrika') {
+        bhastrikaAudio.currentTime = 0;
+        bhastrikaAudio.play();
+        return;
+      }
+      if (phaseName === 'Inhale') {
+        inhaleAudio.currentTime = 0;
+        inhaleAudio.play();
+      } else if (phaseName === 'Exhale') {
+        const audio = (preset === 'sigh') ? sighAudio : exhaleAudio;
+        audio.currentTime = 0;
+        audio.play();
+      }
+    }
+
+    function updateDurationsFromInputs() {
+      phaseDurations = [
+        parseFloat(inhaleTime.value),
+        parseFloat(hold1Time.value),
+        parseFloat(exhaleTime.value),
+        parseFloat(hold2Time.value)
+      ];
+    }
+
+    document.getElementById('presetSelector').addEventListener('change', (e) => {
+      const val = e.target.value;
+      const presets = {
+        '4-7-8': [4, 7, 8, 0],
+        'box': [4, 4, 4, 4],
+        'sigh': [4, 0, 8, 0],
+        'sleep': [4, 0, 6, 0],
+        'bhastrika': [0.3, 0, 0.3, 0]
+      };
+      if (presets[val]) {
+        [inhaleTime.value, hold1Time.value, exhaleTime.value, hold2Time.value] = presets[val];
+        updateDurationsFromInputs();
+      }
+    });
+
+    document.querySelectorAll('#inhaleTime, #hold1Time, #exhaleTime, #hold2Time')
+      .forEach(input => input.addEventListener('input', updateDurationsFromInputs));
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+      const preset = document.getElementById('presetSelector').value;
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        bgmAudio.src = (preset === 'bhastrika')
+          ? 'https://github.com/monica30810/learning-project/raw/refs/heads/main/AwakeMySoul.mp3'
+          : 'https://raw.githubusercontent.com/monica30810/learning-project/main/The_Sirens_of_Titan.mp3';
+        bgmAudio.currentTime = (preset === 'bhastrika') ? 3 : 0;
+        bgmAudio.play().catch(e => console.warn('音樂播放失敗', e));
+        lastSwitchTime = millis() / 1000;
+        playBtn.innerText = 'Ⅱ';
+      } else {
+        bgmAudio.pause();
+        playBtn.innerText = '▷';
+      }
+    });
+  </script>
 </body>
 </html>
