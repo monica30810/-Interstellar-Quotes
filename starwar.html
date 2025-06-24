@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>語錄-星際大戰風</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>星際語錄</title>
+  <style>
+    html, body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    #starCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .quoteLine {
+  position: absolute;
+  top: 60%; /* 👈 加上這行 */
+  left: 50%;
+  transform: translateX(-50%) translateY(0) scale(1) perspective(800px) rotateX(20deg);
+  font-size: 28px;
+  color: #FFee00;
+  text-align: center;
+  white-space: pre-line;
+  z-index: 1;
+  opacity: 0;
+  animation: scrollUp 10s linear forwards;
+}/* 調速度 */
+
+@keyframes scrollUp {
+  0% {
+    transform: translateX(-50%) translateY(0) scale(1) perspective(400px) rotateX(30deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-800px) scale(0.2) perspective(400px) rotateX(35deg);
+    opacity: 0;
+  }
+}
+
+
+
+    #generateBtn {
+      position: absolute;
+      top: 75%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(circle at top left, #3d4bff, #151f3b);
+      color: white;
+      font-size: 20px;
+      border: none;
+      border-radius: 32px;
+      padding: 14px 32px;
+      cursor: pointer;
+      z-index: 2;
+      box-shadow: 0 0 16px #a8b0ff;
+      white-space: nowrap;
+    }
+
+    #generateBtn:hover {
+      background: #4a5aff;
+    }
+
+    #bgmControl {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+    }
+
+    #volumeSlider {
+      width: 100px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starCanvas"></canvas>
+  <button id="generateBtn">✨ 接收星際語錄 ✨</button>
+
+  <audio id="bgm" preload="auto" loop>
+    <source src="https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/CaptainSpark.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="bgmControl">
+    <button id="muteBtn">🔊</button>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5">
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starCanvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < 200; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2,
+          speed: Math.random() * 0.5 + 0.2
+        });
+      }
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, 2 * Math.PI);
+        ctx.fill();
+        star.y -= star.speed;
+        if (star.y < 0) star.y = canvas.height;
+      });
+      requestAnimationFrame(drawStars);
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      initStars();
+    });
+
+    resizeCanvas();
+    initStars();
+    drawStars();
+  </script>
+
+  <script>
+    const generateBtn = document.getElementById("generateBtn");
+    const bgm = document.getElementById("bgm");
+    const volumeSlider = document.getElementById("volumeSlider");
+    const muteBtn = document.getElementById("muteBtn");
+
+    let hasPlayedMusic = false;
+    bgm.volume = parseFloat(volumeSlider.value);
+
+    volumeSlider.addEventListener("input", () => {
+      bgm.volume = parseFloat(volumeSlider.value);
+    });
+
+    muteBtn.addEventListener("click", () => {
+      bgm.muted = !bgm.muted;
+      muteBtn.textContent = bgm.muted ? "🔇" : "🔊";
+    });
+
+    async function fetchQuoteFromSheet() {
+      const url = 'https://opensheet.elk.sh/1IeMHdCagm62cWWnW9Qt3eq-bCgst2_gSyptctj4E9WQ/quotes';
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const random = data[Math.floor(Math.random() * data.length)];
+        const quote = random.quote || "✨ 宇宙的訊息來不及傳送 ✨";
+        const author = random.author || "";
+        return `「${quote}」${author ? `<span class="author">—— ${author}</span>` : ""}`;
+      } catch (err) {
+        console.error("語錄讀取失敗", err);
+        return "✨ 宇宙的訊息來不及傳送 ✨";
+      }
+    }
+
+    function displayQuoteWithAnimation(html) {
+      const quote = document.createElement("div");
+      quote.className = "quoteLine";
+      quote.innerHTML = html;
+      document.body.appendChild(quote);
+
+      void quote.offsetWidth;
+      quote.style.animation = 'scrollUp 15s linear forwards';
+
+      setTimeout(() => {
+        quote.remove();
+      }, 60000);
+    }
+
+    let generating = false;
+
+    generateBtn.addEventListener("click", async () => {
+      if (generating) return;
+      generating = true;
+
+      if (!hasPlayedMusic) {
+        bgm.currentTime = 10; // 👈 這行決定從第幾秒開始播放
+        bgm.play();
+        hasPlayedMusic = true;
+      }
+
+      for (let i = 0; i < 3; i++) {
+        const html = await fetchQuoteFromSheet();
+        displayQuoteWithAnimation(html);
+        await new Promise(resolve => setTimeout(resolve, 2000));// 🔸這行就是間隔 4 秒
+      }
+
+      generating = false;
+    });
+  </script>
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
