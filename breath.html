@@ -62,56 +62,39 @@
 
     /* 📱 手機版額外優化 */
 @media (max-width: 480px) {
-  #controls {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 20px 20px 0 0;
-    width: 95vw;
-    padding: 12px;
-    gap: 10px;
-    flex-direction: column;
-  }
-
-  #controls .row {
-    display: flex;
-    width: 100%;
-    gap: 8px;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  #controls .row select {
-    flex: 1.5;
-    min-width: 120px;
-  }
-
-  #controls .row button {
-    flex: 0 0 auto;
-  }
-
-  #controls input[type="number"] {
-    width: 3.5rem;
-  }
-
-  #controls .timing-row {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    gap: 8px;
-  }
-
-  #controls .timing-row label {
-    flex: 0 0 auto;
-    margin-right: 0.25rem;
-  }
-
-  #controls .timing-row input {
-    flex: 1;
-    max-width: 3.5rem;
-  }
+      #controls {
 }
+
+#controls .row:first-child {
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+#controls .row:first-child label {
+  margin-right: 0.5rem;
+}
+
+#controls .row:first-child select {
+  flex: 1;
+  min-width: 120px;
+  max-width: 180px;
+  margin-right: 0.5rem;
+}
+
+#controls .row:first-child button {
+  flex-shrink: 0;
+}
+#controls {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 20px 20px 0 0;
+        width: 95vw;
+        padding: 12px;
+        gap: 10px;
+      }
+    }
 
 
   </style>
