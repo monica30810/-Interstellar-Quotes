@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -5,134 +6,176 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>極光呼吸引導</title>
   <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Noto+Serif+TC&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
-      height: 100%;
       background-color: #0b0b14;
-      font-family: 'Noto Serif TC', 'Playfair Display', serif, sans-serif;
-      font-size: 16px; /* 基準字體，rem 相對這個 */
+      overflow: hidden;
+      font-family: 'Noto Serif TC', serif;
+      height: 100%;
     }
-
     #controls {
-      position: fixed;
-      align-items: center;
-      transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.05);
-      padding: 0.75rem 1.25rem;
-      border-radius: 1rem;
-      color: #fff;
-      font-size: 0.9rem;
-      text-align: left;
-      z-index: 10;
-      box-shadow: 0 0 12px rgba(255,255,255,0.5);
-      resize: both;
-      overflow: auto;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      cursor: move;
-      min-width: 185px;
-      max-width: 90vw;
-      max-height: 40vh;
-    }
+}
 
-    #controls input,
-    #controls select {
+#controls .row:first-child {
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+#controls .row:first-child label {
+  margin-right: 1px;
+}
+
+#controls .row:first-child select {
+  flex: 1;
+  min-width: 120px;
+  max-width: 220px;
+  margin-right: 0.5rem;
+}
+
+#controls .row:first-child button {
+  flex-shrink: 0;
+}
+#controls {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.75rem 1rem;
+      border-radius: 1rem;
+      color: white;
+      font-size: 0.9rem;
+      box-shadow: 0 0 12px rgba(255,255,255,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      max-width: 90vw;
+      z-index: 999;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    #controls label {
+      margin-right: 3px;
+    }
+    #controls input, #controls select {
+      width: 60px;
       background: rgba(255,255,255,0.1);
       color: white;
       border: none;
       border-radius: 6px;
-      padding: 0.25rem 0.4rem;
-      font-size: 0.95rem;
+      padding: 0.25rem 0.6rem;
+      font-size: 1rem;
+      min-width: 60px;
     }
-
     #controls button {
       background: rgba(255,255,255,0.4);
       border: none;
       color: white;
-      font-size: 1.1rem;
+      font-size: 1rem;
       border-radius: 6px;
+      padding: 0.4rem 0.8rem;
       cursor: pointer;
-      padding: 0.35rem 0.7rem;
     }
-
-    /* 📱 手機版額外優化 */
-/* 📱 手機畫面 */
-@media (max-width: 480px) {
-  html, body {
-    font-size: 14px;
-  }
-
-  #controls {
-    width: 95vw;
-    padding: 12px;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 20px 20px 0 0;
-    max-height: 50vh;
-    overflow-y: auto;
-    gap: 12px;
-  }
-
-  .row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 6px;
-  }
-
-  #controls select,
-  #controls input {
-    width: 100%;
-    min-width: 100%;
-    font-size: 1rem;
-  }
-
-  #controls button {
-    width: 100%;
-  }
+    @media (min-width: 481px) {
+      #controls {
 }
 
+#controls .row:first-child {
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
 
+#controls .row:first-child label {
+  margin-right: 0.5rem;
+}
 
+#controls .row:first-child select {
+  flex: 1;
+  min-width: 120px;
+  max-width: 180px;
+  margin-right: 0.5rem;
+}
+
+#controls .row:first-child button {
+  flex-shrink: 0;
+}
+#controls {
+        position: fixed;
+        left: 50%;
+        bottom: 20px;
+        transform: translateX(-50%);
+        cursor: move;
+        resize: both;
+        overflow: auto;
+        min-width: 200px;
+        max-height: 40vh;
+      }
+    }
+    @media (max-width: 480px) {
+      #controls {
+}
+
+#controls .row:first-child {
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+#controls .row:first-child label {
+  margin-right: 0.5rem;
+}
+
+#controls .row:first-child select {
+  flex: 1;
+  min-width: 120px;
+  max-width: 180px;
+  margin-right: 0.5rem;
+}
+
+#controls .row:first-child button {
+  flex-shrink: 0;
+}
+#controls {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 20px 20px 0 0;
+        width: 95vw;
+        padding: 12px;
+        gap: 10px;
+      }
+    }
   </style>
 </head>
-
 <body>
-  
-<div id="controls">
-  <div class="row">
-    <label for="presetSelector">呼吸法：</label>
-    <select id="presetSelector">
-      <option value="">自訂呼吸節奏</option>
-      <option value="4-7-8">舒緩焦慮 4-7-8</option>
-      <option value="box">集中注意力 4-4-4-4</option>
-      <option value="sigh">舒緩激動情緒(嘴巴吐氣)</option>
-      <option value="sleep">無法入睡(左鼻孔呼吸)</option>
-      <option value="bhastrika">打通能量通道(快速吸吐)</option>
-    </select>
-    <button id="playBtn">▷</button>
-  </div>
+  <div id="controls">
+    <div class="row">
+      <label>呼吸法：</label>
+      
+<select id="presetSelector">
+  <option value="">自訂呼吸節奏</option>
+  <option value="4-7-8">舒緩焦慮 4-7-8</option>
+  <option value="box">集中注意力 4-4-4-4</option>
+  <option value="sigh">舒緩激動情緒(嘴巴吐氣)</option>
+  <option value="sleep">無法入睡(左鼻孔呼吸)</option>
+  <option value="bhastrika">打通能量通道(快速吸吐)</option>
+</select>
 
-  <div class="timing-row">
-    <label>吸</label>
-    <input type="number" id="inhaleTime" value="4" min="1" max="20">
-    <label>停</label>
-    <input type="number" id="hold1Time" value="0" min="0" max="20">
+      <button id="playBtn">▷</button>
+    </div>
+    <div class="row" style="display: flex; gap: 10px;">
+      <label>吸</label><input id="inhaleTime" value="4" />
+      <label>停</label><input id="hold1Time" value="0" />
+    </div>
+    <div class="row" style="display: flex; gap: 10px;">
+      <label>吐</label><input id="exhaleTime" value="6" />
+      <label>停</label><input id="hold2Time" value="0" />
+    </div>
   </div>
-
-  <div class="timing-row">
-    <label>吐</label>
-    <input type="number" id="exhaleTime" value="6" min="1" max="20">
-    <label>停</label>
-    <input type="number" id="hold2Time" value="0" min="0" max="20">
-  </div>
-</div>
-
 
 <script>
 let phase = 0;
@@ -172,7 +215,6 @@ function setup() {
   noStroke();
   outerColor = color(auroraColors[0][1]);
   updateDurationsFromInputs();
-  enableDrag();
 }
 
 function draw() {
@@ -228,13 +270,11 @@ function draw() {
 
 function playSoundForPhase(phaseName) {
   const preset = document.getElementById('presetSelector').value;
-
   if (preset === 'bhastrika') {
     bhastrikaAudio.currentTime = 0;
     bhastrikaAudio.play();
     return;
   }
-
   if (phaseName === 'Inhale') {
     inhaleAudio.currentTime = 0;
     inhaleAudio.play();
@@ -247,19 +287,15 @@ function playSoundForPhase(phaseName) {
 
 document.getElementById('presetSelector').addEventListener('change', (e) => {
   const val = e.target.value;
-  if (val === '4-7-8') {
-    inhaleTime.value = 4; hold1Time.value = 7; exhaleTime.value = 8; hold2Time.value = 0;
-  } else if (val === 'box') {
-    inhaleTime.value = 4; hold1Time.value = 4; exhaleTime.value = 4; hold2Time.value = 4;
-  } else if (val === 'sigh') {
-    inhaleTime.value = 4; hold1Time.value = 0; exhaleTime.value = 8; hold2Time.value = 0;
-  } else if (val === 'sleep') {
-    inhaleTime.value = 4; hold1Time.value = 0; exhaleTime.value = 6; hold2Time.value = 0;
-  } else if (val === 'bhastrika') {
-    inhaleTime.value = 0.3; hold1Time.value = 0; exhaleTime.value = 0.3; hold2Time.value = 0;
-  } else if (val === 'kapalabhati') {
-    inhaleTime.value = 0.5; hold1Time.value = 0; exhaleTime.value = 0.5; hold2Time.value = 0;
-  }
+  const presets = {
+    '4-7-8': [4, 7, 8, 0],
+    'box': [4, 4, 4, 4],
+    'sigh': [4, 0, 8, 0],
+    'sleep': [4, 0, 6, 0],
+    'bhastrika': [0.3, 0, 0.3, 0],
+    'kapalabhati': [0.5, 0, 0.5, 0]
+  };
+  [inhaleTime.value, hold1Time.value, exhaleTime.value, hold2Time.value] = presets[val];
   updateDurationsFromInputs();
 });
 
@@ -274,9 +310,7 @@ function updateDurationsFromInputs() {
 
 document.getElementById('playBtn').addEventListener('click', () => {
   const preset = document.getElementById('presetSelector').value;
-
   isPlaying = !isPlaying;
-
   if (isPlaying) {
     if (preset === 'bhastrika') {
       bgmAudio.src = 'https://github.com/monica30810/learning-project/raw/refs/heads/main/AwakeMySoul.mp3';
@@ -291,50 +325,6 @@ document.getElementById('playBtn').addEventListener('click', () => {
     bgmAudio.pause();
     playBtn.innerText = '▷';
   }
-});
-
-function enableDrag() {
-  const el = document.getElementById('controls');
-  let isDragging = false;
-  let dragOffsetX = 0, dragOffsetY = 0;
-
-  el.addEventListener('mousedown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'BUTTON') return;
-    isDragging = true;
-    dragOffsetX = e.clientX - el.offsetLeft;
-    dragOffsetY = e.clientY - el.offsetTop;
-    document.body.style.userSelect = 'none';
-    el.style.cursor = 'grabbing';
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    const maxLeft = window.innerWidth - el.offsetWidth;
-    const maxTop = window.innerHeight - el.offsetHeight;
-    let newLeft = Math.max(0, Math.min(e.clientX - dragOffsetX, maxLeft));
-    let newTop = Math.max(0, Math.min(e.clientY - dragOffsetY, maxTop));
-    el.style.left = `${newLeft}px`;
-    el.style.top = `${newTop}px`;
-  });
-
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-    document.body.style.userSelect = 'auto';
-    el.style.cursor = 'move';
-  });
-}
-
-window.addEventListener('load', () => {
-  const el = document.getElementById('controls');
-  const left = (window.innerWidth - el.offsetWidth) / 2;
-  const bottom = 20;
-  el.style.left = `${left}px`;
-  el.style.top = `${window.innerHeight - el.offsetHeight - bottom}px`;
-
-  // ✅ 加入：即時更新數值變化
-  ['inhaleTime', 'hold1Time', 'exhaleTime', 'hold2Time'].forEach(id => {
-    document.getElementById(id).addEventListener('input', updateDurationsFromInputs);
-  });
 });
 </script>
 
