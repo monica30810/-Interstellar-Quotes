@@ -67,6 +67,7 @@
       cursor: pointer;
       z-index: 10;
       overflow: hidden;
+      white-space: nowrap;** /* 加上這行防止換行 */
     }
 
     #generateBtn:hover {
@@ -157,6 +158,12 @@
         font-size: 16px;
         max-width: 90vw;
         padding: 0 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+  }
+}
+
       }
 
       #generateBtn {
