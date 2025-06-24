@@ -37,11 +37,19 @@
   font-size: 28px;
   color: #FFee00;
   text-align: center;
-  white-space: pre-line;
+  max-width: 90vw; /* 或 95vw，讓它不要太窄 */
+  word-break: break-word; /* 必要時自動換行 */
+  white-space: normal;
   z-index: 1;
   opacity: 0;
   animation: scrollUp 10s linear forwards;
 }/* 調速度 */
+    
+@media (max-width: 600px) {
+  .quoteLine {
+    font-size: 20px;
+  }
+}
 
 @keyframes scrollUp {
   0% {
