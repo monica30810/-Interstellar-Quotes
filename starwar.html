@@ -102,11 +102,11 @@
     #volumeSlider {
       width: 100px;
       
-     @media (max-width: 600px) {
+@media (max-width: 600px) {
     .quoteLine {
-      font-size: 18px;
+      font-size: 17px;
       max-width: 95vw;
-      padding: 0 2vw;
+      padding: 0 0vw;
     }
 
     .quoteLine .author {
@@ -242,7 +242,7 @@
       for (let i = 0; i < 3; i++) {
         const html = await fetchQuoteFromSheet();
         displayQuoteWithAnimation(html);
-        await new Promise(resolve => setTimeout(resolve, 3000));// 🔸這行就是間隔 ＿ 秒
+        await new Promise(resolve => setTimeout(resolve, 4000));// 🔸這行就是間隔 ＿ 秒
       }
 
       generating = false;
