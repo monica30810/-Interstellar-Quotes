@@ -62,39 +62,54 @@
 
     /* 📱 手機版額外優化 */
 @media (max-width: 480px) {
-      #controls {
+  #controls {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95vw;
+    padding: 12px;
+    border-radius: 20px 20px 0 0;
+    max-height: 50vh;
+    flex-direction: column;
+    align-items: stretch;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 12px;
+  }
+
+  #controls .row:first-child {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+
+  #controls .row:first-child label {
+    margin-right: 0.5rem;
+  }
+
+  #controls .row:first-child select {
+    flex: 1;
+    min-width: 120px;
+    max-width: 180px;
+    margin-right: 0.5rem;
+  }
+
+  #controls .row:first-child button {
+    flex-shrink: 0;
+  }
+
+  .timing-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .timing-row label,
+  .timing-row input {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
 }
 
-#controls .row:first-child {
-  flex-wrap: nowrap;
-  justify-content: space-between;
-}
-
-#controls .row:first-child label {
-  margin-right: 0.5rem;
-}
-
-#controls .row:first-child select {
-  flex: 1;
-  min-width: 120px;
-  max-width: 180px;
-  margin-right: 0.5rem;
-}
-
-#controls .row:first-child button {
-  flex-shrink: 0;
-}
-#controls {
-        position: fixed;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        border-radius: 20px 20px 0 0;
-        width: 95vw;
-        padding: 12px;
-        gap: 10px;
-      }
-    }
 
 
   </style>
