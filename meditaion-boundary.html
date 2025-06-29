@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>情緒界線</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>內在星球：冥想引導</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: radial-gradient(ellipse at center, #1d2b64 0%, #0f0c29 100%);
+      font-family: 'Noto Serif TC', serif;
+      color: white;
+      overflow: hidden;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -2;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+      padding: 4vh 5vw;
+      box-sizing: border-box;
+    }
+
+    .aura {
+      width: min(42vw, 280px);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08), rgba(173, 216, 230, 0.2), rgba(0, 0, 0, 0));
+      box-shadow: 
+        0 0 60px 40px rgba(120, 180, 255, 0.2),
+        0 0 120px 60px rgba(180, 220, 255, 0.15);
+      animation: breathe 8s infinite ease-in-out;
+      flex-shrink: 0;
+    }
+
+    @keyframes breathe {
+      0%   { transform: scale(1); opacity: 0.6; }
+      50%  { transform: scale(1.6); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.6; }
+    }
+
+    .instruction {
+      margin-top: 5vh;
+      font-size: 4.5vw;
+      max-width: 90vw;
+      line-height: 1.8;
+    }
+
+    @media (min-width: 768px) {
+      .instruction {
+        font-size: 1.5rem;
+        max-width: 70%;
+      }
+    }
+
+    .controls {
+      margin-top: 4vh;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    button {
+      padding: 0.8em 1.8em;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s;
+      backdrop-filter: blur(6px);
+    }
+
+    button:hover {
+      background: rgba(255,255,255,0.12);
+      transform: scale(1.04);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="container">
+  <div class="aura"></div>
+
+  <div class="instruction" id="instructionText">
+    深呼吸，讓自己緩緩沉入內在宇宙…
+  </div>
+
+  <div class="controls">
+    <button onclick="nextLine()">下一句</button>
+    <button onclick="toggleAudio()">▶ / Ⅱ  情緒界線冥想引導</button>
+  </div>
+</div>
+
+<audio id="meditationAudio" src="https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/meditation-boundary.MP3"></audio>
+
+<script>
+  const instructions = [
+    "深呼吸，讓自己緩緩沉入內在宇宙…",
+    "感受身體的重量，與地面接觸…",
+    "每一次呼吸，都讓你更靠近心的中心",
+    "你不需要成為誰，只需要安住於當下",
+    "讓思緒像雲朵飄過，無需抓住它",
+    "你的內在有一顆星星，溫柔閃爍著"
+  ];
+
+  let index = 0;
+  const textElement = document.getElementById("instructionText");
+  const audio = document.getElementById("meditationAudio");
+
+  function nextLine() {
+    index = (index + 1) % instructions.length;
+    textElement.textContent = instructions[index];
+  }
+
+  function toggleAudio() {
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  }
+
+  // ✨ 星空動畫
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function createStars(num) {
+    stars = [];
+    for (let i = 0; i < num; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5,
+        alpha: Math.random(),
+        delta: Math.random() * 0.02
+      });
+    }
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'white';
+    stars.forEach(star => {
+      star.alpha += star.delta;
+      if (star.alpha <= 0 || star.alpha >= 1) star.delta = -star.delta;
+      ctx.globalAlpha = star.alpha;
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, 2 * Math.PI);
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+
+  createStars(150);
+  drawStars();
+</script>
+
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
