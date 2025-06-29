@@ -1,14 +1,4 @@
 <!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>情緒界線</title>
-  
-
-</head>
-<body>
-<!-- partial:index.partial.html -->
-<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
@@ -92,13 +82,17 @@
       border-radius: 12px;
       cursor: pointer;
       transition: background 0.3s ease, transform 0.2s;
-      backdrop-filter: blur(6px);
+      backdrop-filter: blur(3px);
     }
 
     button:hover {
-      background: rgba(255,255,255,0.12);
-      transform: scale(1.04);
-    }
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 0 8px rgba(200, 220, 255, 0.5),
+    0 0 22px rgba(150, 200, 255, 0.16);
+  transform: scale(1.06);
+}
+
   </style>
 </head>
 <body>
@@ -191,9 +185,5 @@
   drawStars();
 </script>
 
-</body>
-</html>
-<!-- partial -->
-  
 </body>
 </html>
