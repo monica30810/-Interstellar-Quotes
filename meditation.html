@@ -68,31 +68,43 @@
     .controls {
       margin-top: 4vh;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 1rem;
+      align-items: center;
+    }
+
+    .audio-control, .line-control {
+      display: flex;
       justify-content: center;
     }
 
-    button {
-      padding: 0.8em 1.8em;
+    button, select {
+      padding: 0.8em 1.5em;
       font-size: 1rem;
       background: rgba(255, 255, 255, 0.05);
       color: white;
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s;
+      transition: background 0.3s ease, transform 0.2s, box-shadow 0.3s;
       backdrop-filter: blur(3px);
     }
 
-    button:hover {
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 0 8px rgba(200, 220, 255, 0.5),
-    0 0 22px rgba(150, 200, 255, 0.16);
-  transform: scale(1.06);
-}
+    button:hover, select:hover {
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow:
+        0 0 8px rgba(200, 220, 255, 0.5),
+        0 0 22px rgba(150, 200, 255, 0.16);
+      transform: scale(1.06);
+    }
 
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 20 20'%3E%3Cpolygon points='0,0 20,0 10,10'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.7em top 50%;
+      background-size: 0.65em auto;
+    }
   </style>
 </head>
 <body>
@@ -107,8 +119,18 @@
   </div>
 
   <div class="controls">
-    <button onclick="nextLine()">下一句</button>
-    <button onclick="toggleAudio()">▶ / Ⅱ  情緒界線冥想引導</button>
+    <div class="audio-control">
+      <select id="audioSelector" onchange="switchAudio()">
+        <option value="boundary">情緒界線冥想 〰 </option>
+        <option value="sleep">睡前關機冥想 🌙 </option>
+      </select>
+    </div>
+    <div class="audio-control">
+      <button onclick="toggleAudio()"> ▶ / ⏸ </button>
+    </div>
+    <div class="line-control">
+      <button onclick="nextLine()">下一句</button>
+    </div>
   </div>
 </div>
 
@@ -141,7 +163,18 @@
     }
   }
 
-  // ✨ 星空動畫
+  function switchAudio() {
+    const selector = document.getElementById("audioSelector");
+    const value = selector.value;
+    if (value === "boundary") {
+      audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/meditation-boundary.MP3";
+    } else if (value === "sleep") {
+      audio.src = "https://github.com/monica30810/InnerWorld/raw/refs/heads/main/assets/meditation-sleep.MP3";
+    }
+    audio.play();
+  }
+
+  // 星空動畫
   const canvas = document.getElementById('stars');
   const ctx = canvas.getContext('2d');
   let stars = [];
@@ -183,6 +216,8 @@
 
   createStars(150);
   drawStars();
+  document.querySelector('.line-control').style.display = 'none';
+
 </script>
 
 </body>
